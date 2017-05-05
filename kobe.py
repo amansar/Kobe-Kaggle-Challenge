@@ -55,12 +55,12 @@ def main():
         raw = raw.drop(drop, 1)
     raw = randomForestStrToNum(raw)
     nona =  raw[pd.notnull(raw['shot_made_flag'])]
-    # print(raw)
+
+    #splitting explantory and response variables
     train = nona.drop('shot_made_flag', 1)
     train_y = nona['shot_made_flag']
 
-
-
+    #setting up KFolds
     seed = 24
     num_folds = 3
     folds = KFold(len(train), n_folds=num_folds, random_state=seed, shuffle=True)
