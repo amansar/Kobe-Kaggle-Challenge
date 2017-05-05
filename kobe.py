@@ -30,13 +30,26 @@ def randomForestStrToNum(raw):
         raw = raw.drop(var, 1)
     return raw
 
+def testModel(model, train, train_y, num_rounds, folds):
+    # performs cross_validation on kfolds, returns the average over all rounds
+
+    avg_total = 0
+    for i in range(num_rounds):
+        results = cross_val_score(model, train, train_y, cv=folds)
+        avg_round = sum(results) / 3
+        print("Results: %s, Average: %f" % (results, avg_round))
+        avg_total += avg_round
+
+    return avg_total / num_rounds
+
 def main():
     # import data; maybe make new function for preprocessing data
     filename= "data.csv"
     raw = pd.read_csv(filename)
     raw['remaining_time'] = raw['minutes_remaining'] * 60 + raw['seconds_remaining']
     raw["last_5_sec_in_period"] = raw["remaining_time"] < 5
-    drops = ["minutes_remaining", "seconds_remaining","team_id", "shot_zone_area", 'shot_zone_range', 'shot_zone_basic', "game_date", "team_name", "matchup", "lat", "lon", 'game_event_id']
+    drops = ["minutes_remaining", "seconds_remaining","team_id", "shot_zone_area", \
+             'shot_zone_range', 'shot_zone_basic', "game_date", "team_name", "matchup", "lat", "lon", 'game_event_id']
     raw["home_play"] = raw["matchup"].str.contains("vs").astype("int")
     for drop in drops:
         raw = raw.drop(drop, 1)
@@ -45,10 +58,20 @@ def main():
     # print(raw)
     train = nona.drop('shot_made_flag', 1)
     train_y = nona['shot_made_flag']
-    model = RandomForestClassifier(n_estimators=10, max_depth = 10)
+
+
+
+    seed = 24
+    num_folds = 3
+    folds = KFold(len(train), n_folds=num_folds, random_state=seed, shuffle=True)
+
+
+    model = RandomForestClassifier(n_estimators=150, max_depth = 10)
     model = model.fit(train, train_y)
-    results = cross_val_score(model, train, train_y, cv=5)
-    print(results)
+
+    num_rounds = 10
+    randomForestScore = testModel(model, train, train_y, num_rounds, folds)
+    print("Average after %d rounds: %f" % (num_rounds, randomForestScore))
 
     #test out different parameters for random forest
     #shuffle when running cross_val_score
