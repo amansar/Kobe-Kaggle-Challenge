@@ -1,24 +1,18 @@
 """
-K     K     O O O     B B B     E E E E E
-K   K     O       O   B     B   E
-K K       O       O   B B B     E E E E E
-K K       O       O   B     B   E
-K   K     O       O   B     B   E
-K     K     O O O     B B B     E E E E E
+T T T T T  E E E E E     S S S    T T T T T     S S S
+    T      E           S              T       S
+    T      E E E E E     S S S        T         S S S
+    T      E                   S      T               S
+    T      E E E E E     S S S        T         S S S
 
 
-For preprocessing, get rid of data points that don't have shot made field.
-Create test/training splits from data that does have shot made field.
+Running tests to determine best parameters
 """
 import csv
-from sklearn.ensemble import *
 import pandas as pd
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier
-# import matplotlib.pyplot as plt
-# %matplotlib inline
+from sklearn.ensemble import *
 from sklearn.cross_validation import KFold, cross_val_score
-
 
 
 def randomForestStrToNum(raw):
@@ -32,12 +26,10 @@ def randomForestStrToNum(raw):
 
 def testModel(model, train, train_y, num_rounds, folds):
     # performs cross_validation on kfolds, returns the average over all rounds
-
     avg_total = 0
     for i in range(num_rounds):
         results = cross_val_score(model, train, train_y, cv=folds)
         avg_round = sum(results) / 3
-        # print("Results: %s, Average: %f" % (results, avg_round))
         avg_total += avg_round
 
     return avg_total / num_rounds
@@ -71,25 +63,53 @@ def main():
 
     num_rounds = 10
 
-    #finding best n_estimators:
+    ###########################################################################
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    #                         Random Forest Classifier                        #
+    #          parameters to test: n_estimators, max_depth, max_features      #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
     # num_estimators = [1, 10, 100, 200]
     # for num in num_estimators:
-    #     model = RandomForestClassifier(n_estimators=num, max_depth=10)
+    #     model = RandomForestClassifier(n_estimators=num, max_depth=10, random_state=seed)
     #     randomForestScore = testModel(model, train, train_y, num_rounds, folds)
     #     print("Number of estimators: %d, Average Score: %f" % (num, randomForestScore))
 
-    # depths = [1, 10, 100, 200, None]
+
+    # depths = [1, 10, 100, 200]
     # for depth in depths:
-    #     model = RandomForestClassifier(n_estimators=100, max_depth=depth)
+    #     model = RandomForestClassifier(n_estimators=100, max_depth=depth, random_state=seed)
     #     randomForestScore = testModel(model, train, train_y, num_rounds, folds)
     #     print("Max Depth: %d, Average Score: %f" % (depth, randomForestScore))
 
-
     features = [0.25, 0.5, 0.75, 1.00]
     for feature in features:
-        model = RandomForestClassifier(n_estimators=100, max_depth=10, max_features=feature)
+        model = RandomForestClassifier(n_estimators=100, max_depth=10, max_features=feature, random_state=seed)
         randomForestScore = testModel(model, train, train_y, num_rounds, folds)
-        print("Max features (percent): %d, Average Score: %f" % (feature, randomForestScore))
+        print("Max features (percent): %f, Average Score: %f" % (feature, randomForestScore))
+
+    ############################################################################
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    #                         AdaBoost Classifier                             #
+    #          parameters to test: n_estimators, learning_rate                #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    num_estimators = [10, 25, 50, 100]
+    for num in num_estimators:
+        model = AdaBoostClassifier(n_estimators=num, random_state=seed)
+        adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
+        print("Number of estimators: %d, Average Score: %f" % (num, adaBoostScore))
+
+    learning_rates = [0.01, 0.1, 0.5, 1.0]
+    for rate in learning_rates:
+        model = AdaBoostClassifier(n_estimators=25, learning_rate=rate, random_state=seed)
+        adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
+        print("Learning rate: %f, Average Score: %f" % (rate, adaBoostScore))
+
+
+
     # randomForestScore = testModel(model, train, train_y, num_rounds, folds)
     # print("Average after %d rounds: %f" % (num_rounds, randomForestScore))
 
