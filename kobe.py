@@ -47,8 +47,14 @@ def main():
     train_y = nona['shot_made_flag']
     model = RandomForestClassifier(n_estimators=10, max_depth = 10)
     model = model.fit(train, train_y)
-    results = cross_val_score(model, train, train_y)
+    results = cross_val_score(model, train, train_y, cv=5)
     print(results)
+
+    #test out different parameters for random forest
+    #shuffle when running cross_val_score
+    #test decision trees
+    #SVMS
+    #adaboost
 
 
 main()
