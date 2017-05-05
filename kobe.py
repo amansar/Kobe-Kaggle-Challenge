@@ -21,35 +21,34 @@ from sklearn.cross_validation import KFold, cross_val_score
 
 
 
-def randomForestStrToNum():
+def randomForestStrToNum(raw):
     # turn categorical variables into dummy variables
     categorical_vars = ['action_type', 'combined_shot_type', 'shot_type', 'opponent', 'period', 'season']
     for var in categorical_vars:
-        raw = pd.concat([raw, pd.get_dummies(raw[var], prefix=var)], 1)
+        dvVar = pd.get_dummies(raw[var])
+        raw = pd.concat([raw, dvVar], axis=1)
         raw = raw.drop(var, 1)
-
+    return raw
 
 def main():
     # import data; maybe make new function for preprocessing data
     filename= "data.csv"
     raw = pd.read_csv(filename)
-    nona =  raw[pd.notnull(raw['shot_made_flag'])]
     raw['remaining_time'] = raw['minutes_remaining'] * 60 + raw['seconds_remaining']
     raw["last_5_sec_in_period"] = raw["remaining_time"] < 5
     drops = ["minutes_remaining", "seconds_remaining","team_id", "shot_zone_area", 'shot_zone_range', 'shot_zone_basic', "game_date", "team_name", "matchup", "lat", "lon", 'game_event_id']
     raw["home_play"] = raw["matchup"].str.contains("vs").astype("int")
     for drop in drops:
-        nona = nona.drop(drop, 1)
+        raw = raw.drop(drop, 1)
+    raw = randomForestStrToNum(raw)
+    nona =  raw[pd.notnull(raw['shot_made_flag'])]
+    # print(raw)
     train = nona.drop('shot_made_flag', 1)
     train_y = nona['shot_made_flag']
-
-    print(nona)
-
-    model = RandomForestClassifier(n_estimators=10)
+    model = RandomForestClassifier(n_estimators=10, max_depth = 10)
     model = model.fit(train, train_y)
     results = cross_val_score(model, train, train_y)
-    print results
-
+    print(results)
 
 
 main()
