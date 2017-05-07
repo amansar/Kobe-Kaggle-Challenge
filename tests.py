@@ -12,6 +12,7 @@ import csv
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import *
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.cross_validation import KFold, cross_val_score
 
 
@@ -83,11 +84,11 @@ def main():
     #     randomForestScore = testModel(model, train, train_y, num_rounds, folds)
     #     print("Max Depth: %d, Average Score: %f" % (depth, randomForestScore))
 
-    features = [0.25, 0.5, 0.75, 1.00]
-    for feature in features:
-        model = RandomForestClassifier(n_estimators=100, max_depth=10, max_features=feature, random_state=seed)
-        randomForestScore = testModel(model, train, train_y, num_rounds, folds)
-        print("Max features (percent): %f, Average Score: %f" % (feature, randomForestScore))
+    # features = [0.25, 0.5, 0.75, 1.00]
+    # for feature in features:
+    #     model = RandomForestClassifier(n_estimators=100, max_depth=10, max_features=feature, random_state=seed)
+    #     randomForestScore = testModel(model, train, train_y, num_rounds, folds)
+    #     print("Max features (percent): %f, Average Score: %f" % (feature, randomForestScore))
 
     ############################################################################
 
@@ -96,18 +97,58 @@ def main():
     #          parameters to test: n_estimators, learning_rate                #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    num_estimators = [10, 25, 50, 100]
-    for num in num_estimators:
-        model = AdaBoostClassifier(n_estimators=num, random_state=seed)
-        adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
-        print("Number of estimators: %d, Average Score: %f" % (num, adaBoostScore))
+    # num_estimators = [10, 25, 50, 100]
+    # for num in num_estimators:
+    #     model = AdaBoostClassifier(n_estimators=num, random_state=seed)
+    #     adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
+    #     print("Number of estimators: %d, Average Score: %f" % (num, adaBoostScore))
+    #
+    # learning_rates = [0.01, 0.1, 0.5, 1.0]
+    # for rate in learning_rates:
+    #     model = AdaBoostClassifier(n_estimators=25, learning_rate=rate, random_state=seed)
+    #     adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
+    #     print("Learning rate: %f, Average Score: %f" % (rate, adaBoostScore))
 
-    learning_rates = [0.01, 0.1, 0.5, 1.0]
-    for rate in learning_rates:
-        model = AdaBoostClassifier(n_estimators=25, learning_rate=rate, random_state=seed)
-        adaBoostScore = testModel(model, train, train_y, num_rounds, folds)
-        print("Learning rate: %f, Average Score: %f" % (rate, adaBoostScore))
 
+    ############################################################################
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    #                         Decision Tree Classifier                        #
+    #          parameters to test: max_features, max_depth                    #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    # features = [0.25, 0.5, 0.75, 1.00]
+    # for feature in features:
+    #     model = DecisionTreeClassifier(max_depth=10, max_features=feature, random_state=seed)
+    #     decisionTreeScore = testModel(model, train, train_y, num_rounds, folds)
+    #     print("Max features (percent): %f, Average Score: %f" % (feature, decisionTreeScore))
+
+    # depths = [1,5, 10, 25, 50, 75]
+    # for depth in depths:
+    #     model = DecisionTreeClassifier(max_depth=depth, random_state=seed)
+    #     decisionTreeScore = testModel(model, train, train_y, num_rounds, folds)
+    #     print("Max depth: %s, Average Score: %f" % (depth, decisionTreeScore))
+
+
+
+    ############################################################################
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    #                         Decision Tree Classifier                        #
+    #          parameters to test: max_features, max_depth                    #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+    randomForest = RandomForestClassifier(n_estimators=200, max_depth=10, max_features=0.25, random_state=seed)
+    adaBoost = AdaBoostClassifier(n_estimators=25, learning_rate=1.00, random_state=seed)
+    decisionTree = DecisionTreeClassifier(max_features=0.25, max_depth=5, random_state=seed)
+
+    classifiers = [randomForest, adaBoost, decisionTree]
+    scores = []
+    for classifier in classifiers:
+        score = testModel(classifier, train, train_y, num_rounds, folds)
+        scores.append(score)
+
+    print(scores)
 
 
     # randomForestScore = testModel(model, train, train_y, num_rounds, folds)
