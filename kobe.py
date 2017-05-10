@@ -14,9 +14,6 @@ import csv
 from sklearn.ensemble import *
 import pandas as pd
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier
-# import matplotlib.pyplot as plt
-# %matplotlib inline
 from sklearn.cross_validation import KFold, cross_val_score
 
 ##############################################################
@@ -103,32 +100,28 @@ def main():
 
 
     ################# LAYUPS #########################
-    # layup_train = train.loc[train["Layup"] == 1]
-    # layup_train_y = layupFrame['shot_made_flag']
-    #
-    # print("LayupFrame shape: " + str(layupFrame.shape))
-    # layupScore = testSubset(model, train, train_y, layup_train, layup_train_y, num_rounds, num_folds, seed)
-    # print(layupScore)
+    layup_train = train.loc[train["Layup"] == 1]
+    layup_train_y = layupFrame['shot_made_flag']
+
+    print("LayupFrame shape: " + str(layupFrame.shape))
+    layupScore = testSubset(model, train, train_y, layup_train, layup_train_y, num_rounds, num_folds, seed)
+    print(layupScore)
 
     ################## DUNKS ########################
-    # dunk_train = train.loc[train["Dunk"] == 1]
-    # dunk_train_y = dunkFrame['shot_made_flag']
-    #
-    # print("DunkFrame shape: " + str(dunkFrame.shape))
-    # dunkScore = testSubset(model, train, train_y, dunk_train, dunk_train_y, num_rounds, num_folds, seed)
-    # print(dunkScore)
+    dunk_train = train.loc[train["Dunk"] == 1]
+    dunk_train_y = dunkFrame['shot_made_flag']
+
+    print("DunkFrame shape: " + str(dunkFrame.shape))
+    dunkScore = testSubset(model, train, train_y, dunk_train, dunk_train_y, num_rounds, num_folds, seed)
+    print(dunkScore)
 
     ################## FADEAWAY SHOTS ########################
-    fade_train = train.loc[train["Fadeaway Jump Shot"] == 1]
-    fade_train_y = fadeawayShotFrame['shot_made_flag']
-
-    print("FadeawayShotFrame shape: " + str(fadeawayShotFrame.shape))
-    fadeScore = testSubset(model, train, train_y, fade_train, fade_train_y, num_rounds, num_folds, seed)
-    print(fadeScore)
-
-
-
-
+    # fade_train = train.loc[train["Fadeaway Jump Shot"] == 1]
+    # fade_train_y = fadeawayShotFrame['shot_made_flag']
+    #
+    # print("FadeawayShotFrame shape: " + str(fadeawayShotFrame.shape))
+    # fadeScore = testSubset(model, train, train_y, fade_train, fade_train_y, num_rounds, num_folds, seed)
+    # print(fadeScore)
 
 
 
