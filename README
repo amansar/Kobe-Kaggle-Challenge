@@ -15,4 +15,8 @@ accuracy the most. After finding out the optimal parameters for each classifier,
 Running python tests.py should print out the accuracies for each classifier.
 
 Data.csv
-This is where 20 years of data about Kobe's shots over his career is stored. To find out what all the fields for the dataset are, check out this link: https://www.kaggle.com/c/kobe-bryant-shot-selection/data. 
+This is where 20 years of data about Kobe's shots over his career is stored. To find out what all the fields for the dataset are, check out this link: https://www.kaggle.com/c/kobe-bryant-shot-selection/data.
+
+REFERENCES:
+http://www.nba.com/sixers/news/sixers-bolster-analytics-and-strategy-staff/
+https://techcrunch.com/2016/02/10/ibm-watson-teams-with-toronto-raptors-on-data-driven-talent-analysis/
