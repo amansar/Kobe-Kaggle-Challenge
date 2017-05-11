@@ -1,1 +1,18 @@
 Explain how to run your code here.
+There are 3 files the user will be interacting with to run our code.
+
+Kobe.py
+We first used Kobe.py as an introduction to using the Random Forest Classifier. Within the file, we process the data.csv file which contains
+20 years of data about shots Kobe missed or made throughout his career. After dropping irrelevant features of the data, we then used our Random Forest Classifier to predict shots Kobe will make.
+We also used cross_validation here first to see what our accuracy for predictions was. Most importantly, we use Kobe.py to find out how accurate our predictions are for specific shot types like dunk, layups, and
+Fadeaway shots. Currently, the tests for fadeaway shots is commented. If you wish to run all tests, comment out all the code that's beneath each commented label that reads ####### shot_type ######.
+For example, if there's a comment that reads ############ Dunks #########, comment out all the code below it so our prediction accuracies can be printed out for that shot type. After doing this,
+running python kobe.py in the terminal should print our prediction accuracies for Dunks, layups, and fadeaway shots.
+
+tests.py
+Tests.py is where we tested different classifiers (Random Forest, AdaBoost, and DecisionTreeClassifier) with various parameters to find out which parameters improved each classifiers' prediction
+accuracy the most. After finding out the optimal parameters for each classifier, we compared the accuracy rates between all our classifiers to find which classifier had the best prediction accuracy.
+Running python tests.py should print out the accuracies for each classifier.
+
+Data.csv
+This is where 20 years of data about Kobe's shots over his career is stored. To find out what all the fields for the dataset are, check out this link: https://www.kaggle.com/c/kobe-bryant-shot-selection/data. 
