@@ -16,31 +16,30 @@ import pandas as pd
 import numpy as np
 from sklearn.cross_validation import KFold, cross_val_score
 
-##############################################################
 
-#test prediction on specific points (dunks, layups, 3s maybe?)
-#look at probabilistic predictions
-
-##############################################################
 
 def randomForestStrToNum(raw):
-    # turn categorical variables into dummy variables
+    """
+    This function turns our categorical variables into dummy variables so that
+    they can be used by our models. It takes the pandas dataframe object as a parameters
+    and returns the updated dataframe.
+    """
+
     categorical_vars = ['action_type', 'combined_shot_type', 'shot_type', 'opponent', 'period', 'season']
     for var in categorical_vars:
         dvVar = pd.get_dummies(raw[var])
         raw = pd.concat([raw, dvVar], axis=1)
         raw = raw.drop(var, 1)
-        # print(raw[var])
-        # print(var, dvVar)
-    # print(list(raw.columns.values))
     return raw
 
 def testModel(model, train, train_y, num_rounds, folds):
-    # performs cross_validation on kfolds, returns the average over all rounds
-
+    """
+    This function is used to test the performance of our model. It performs
+    cross-validation using a given number of folds over a given number of rounds.
+    It returns the average accuracy over these rounds.
+    """
     avg_total = 0
     for i in range(num_rounds):
-        # model.fit(train, train_y)
         results = cross_val_score(model, train, train_y, cv=folds)
         avg_round = sum(results) / 3
         print("Results: %s, Average: %f" % (results, avg_round))
@@ -51,22 +50,25 @@ def testModel(model, train, train_y, num_rounds, folds):
 
 def testSubset(model, train, train_y, sub_train, sub_train_y, num_rounds, num_folds, seed):
     """
-    fill
+    This function is used to test our model on a subset of the data. First the model
+    is trained on the full data set, and then k-fold cross-validation is performed
+    on the given subset. The average score is returned
     """
     avg_total = 0
     for train_k, test_k in KFold(len(sub_train), n_folds=num_folds, random_state=seed, shuffle=True):
         model.fit(train, train_y)
-        # pred = model.predict(dunk_train.iloc[test_k])
         result = model.score(sub_train.iloc[train_k], sub_train_y.iloc[train_k])
         avg_total += result
 
-    return avg_total / 3
+    return avg_total / num_folds
 
 def main():
-    # import data; maybe make new function for preprocessing data
+    # import data
     filename= "data.csv"
     raw = pd.read_csv(filename)
     originalFrame = raw.copy()
+
+    ################## PREPROCESSING ###########################
     raw['remaining_time'] = raw['minutes_remaining'] * 60 + raw['seconds_remaining']
     raw["last_5_sec_in_period"] = raw["remaining_time"] < 5
     drops = ["minutes_remaining", "seconds_remaining","team_id", "shot_zone_area", \
@@ -87,7 +89,6 @@ def main():
     num_rounds = 10
 
     folds = KFold(len(train), n_folds=num_folds, random_state=seed, shuffle=True)
-
 
     model = RandomForestClassifier(n_estimators=200, max_depth =10, max_features=0.25, random_state=seed)
     # model = model.fit(train, train_y)
@@ -116,14 +117,12 @@ def main():
     print(dunkScore)
 
     ################## FADEAWAY SHOTS ########################
-    # fade_train = train.loc[train["Fadeaway Jump Shot"] == 1]
-    # fade_train_y = fadeawayShotFrame['shot_made_flag']
-    #
-    # print("FadeawayShotFrame shape: " + str(fadeawayShotFrame.shape))
-    # fadeScore = testSubset(model, train, train_y, fade_train, fade_train_y, num_rounds, num_folds, seed)
-    # print(fadeScore)
+    fade_train = train.loc[train["Fadeaway Jump Shot"] == 1]
+    fade_train_y = fadeawayShotFrame['shot_made_flag']
 
-
+    print("FadeawayShotFrame shape: " + str(fadeawayShotFrame.shape))
+    fadeScore = testSubset(model, train, train_y, fade_train, fade_train_y, num_rounds, num_folds, seed)
+    print(fadeScore)
 
 
 
